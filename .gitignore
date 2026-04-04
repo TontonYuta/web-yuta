@@ -8,3 +8,5 @@ coverage/
 !.env.example
 YutaHub-linux-x64/
 YutaHub-linux-x64/
+
+out/
