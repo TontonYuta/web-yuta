@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+YutaHub-linux-x64/
+YutaHub-linux-x64/

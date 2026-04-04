@@ -5,7 +5,7 @@ interface BootSequenceProps {
 }
 
 export default function BootSequence({ onComplete }: BootSequenceProps) {
-  const [bootText, setBootText] = useState<string[]>([]);
+  const [bootLines, setBootLines] = useState<{time: string, text: string}[]>([]);
 
   useEffect(() => {
     const bootSequence = [
@@ -21,7 +21,13 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
     let i = 0;
     const interval = setInterval(() => {
       if (i < bootSequence.length) {
-        setBootText(prev => [...prev, bootSequence[i]]);
+        const now = new Date();
+        const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                           now.getMinutes().toString().padStart(2, '0') + ':' + 
+                           now.getSeconds().toString().padStart(2, '0');
+        
+        const text = bootSequence[i];
+        setBootLines(prev => [...prev, { time: timeString, text }]);
         i++;
       } else {
         clearInterval(interval);
@@ -34,9 +40,9 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
   return (
     <div className="crt min-h-screen bg-[#050505] text-green-500 font-mono p-6 selection:bg-green-900 selection:text-green-400">
       <div className="max-w-3xl mx-auto mt-10">
-        {bootText.map((text, idx) => (
+        {bootLines.map((line, idx) => (
           <div key={idx} className="mb-1 text-sm md:text-base">
-            <span className="text-gray-500">[{new Date().toISOString().split('T')[1].slice(0,8)}]</span> {text}
+            <span className="text-gray-500">[{line.time}]</span> {line.text}
           </div>
         ))}
         <div className="animate-pulse mt-2">_</div>
