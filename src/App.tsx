@@ -1,158 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Terminal, Brain, Languages, FileText, Calculator, ExternalLink, Server, Activity, Database, Code, BookOpen, Keyboard, Search, Command } from 'lucide-react';
-
-const apps = [
-  {
-    id: 'memory-game',
-    title: 'Memory Game',
-    url: 'https://memory-game-yuta.vercel.app',
-    description: 'Trò chơi rèn luyện trí nhớ qua các thẻ bài sinh động. Yêu cầu ghi nhớ và lật các cặp thẻ giống nhau trong thời gian ngắn nhất.',
-    icon: Brain,
-    tags: ['Trí nhớ', 'Giải đố', 'Tập trung'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'english-game',
-    title: 'English Game',
-    url: 'https://english-game-yuta.vercel.app',
-    description: 'Học tiếng Anh hiệu quả và thú vị qua các trò chơi tương tác. Cải thiện từ vựng và ngữ pháp.',
-    icon: Languages,
-    tags: ['Tiếng Anh', 'Từ vựng', 'Tương tác'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'soan-tai-lieu',
-    title: 'Soạn Tài Liệu',
-    url: 'https://soan-tai-lieu.vercel.app',
-    description: 'Công cụ hỗ trợ soạn thảo và quản lý tài liệu học tập nhanh chóng. Tối ưu hóa quy trình học tập.',
-    icon: FileText,
-    tags: ['Công cụ', 'Ghi chú', 'Học tập'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'mathheads',
-    title: 'Math Heads',
-    url: 'https://mathheads.net',
-    description: 'Thử thách tư duy toán học với các bài toán và câu đố hấp dẫn. Nâng cao khả năng tính toán.',
-    icon: Calculator,
-    tags: ['Toán học', 'Tư duy', 'Logic'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'devflow',
-    title: 'DevFlow',
-    url: 'https://devflow-yuta.vercel.app',
-    description: 'Nền tảng hỏi đáp và chia sẻ kiến thức dành cho cộng đồng lập trình viên.',
-    icon: Code,
-    tags: ['Lập trình', 'Cộng đồng', 'Hỏi đáp'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'toeic-game',
-    title: 'TOEIC Game',
-    url: 'https://toeic-game-yuta.vercel.app',
-    description: 'Trò chơi luyện thi TOEIC giúp nâng cao vốn từ vựng và kỹ năng làm bài.',
-    icon: BookOpen,
-    tags: ['TOEIC', 'Tiếng Anh', 'Luyện thi'],
-    sysStatus: 'Hoạt động',
-  },
-  {
-    id: 'typing-game',
-    title: 'Typing Game',
-    url: 'https://typing-game-yuta.vercel.app',
-    description: 'Luyện gõ phím nhanh và chính xác với nhiều chế độ thử thách đa dạng.',
-    icon: Keyboard,
-    tags: ['Gõ phím', 'Tốc độ', 'Kỹ năng'],
-    sysStatus: 'Hoạt động',
-  }
-];
+import { Terminal, Server, Activity, Database, Search } from 'lucide-react';
+import { apps } from './data/apps';
+import BootSequence from './components/BootSequence';
+import TerminalConsole from './components/TerminalConsole';
+import AppCard from './components/AppCard';
+import NotesApp from './components/NotesApp';
+import { AppItem } from './types';
 
 export default function App() {
   const [isBooting, setIsBooting] = useState(true);
-  const [bootText, setBootText] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   
-  // Terminal State
-  const [terminalHistory, setTerminalHistory] = useState<{type: 'command' | 'output' | 'error', text: string}[]>([
-    { type: 'output', text: 'YUTA_OS v1.0.0 đã khởi động. Gõ "help" để xem danh sách lệnh.' }
-  ]);
-  const [commandInput, setCommandInput] = useState('');
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Mở ứng dụng dạng cửa sổ popup tối đa kích thước (giả lập fullscreen)
-  const openAppFullscreen = (url: string, e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  const openAppFullscreen = (url: string) => {
     const width = window.screen.availWidth;
     const height = window.screen.availHeight;
     window.open(url, '_blank', `width=${width},height=${height},left=0,top=0,menubar=no,toolbar=no,location=no,status=no`);
   };
 
-  // Boot Sequence Logic
-  useEffect(() => {
-    const bootSequence = [
-      "Khởi tạo hệ thống YUTA_OS...",
-      "Đang tải kernel_v9.4.2...",
-      "Kiểm tra bộ nhớ: OK (640K RAM SYSTEM GOOD)",
-      "Mounting file system: /dev/sda1 OK",
-      "Đang tải các module ứng dụng...",
-      "Kết nối mạng: ĐÃ THIẾT LẬP (192.168.1.104)",
-      "Khởi động giao diện người dùng..."
-    ];
-    
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < bootSequence.length) {
-        setBootText(prev => [...prev, bootSequence[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setIsBooting(false), 800);
-      }
-    }, 250);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Auto-scroll terminal
-  useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [terminalHistory]);
-
-  const handleCommandSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commandInput.trim()) return;
-
-    const cmd = commandInput.trim().toLowerCase();
-    const newHistory = [...terminalHistory, { type: 'command' as const, text: `guest@yuta:~$ ${commandInput}` }];
-
-    if (cmd === 'help') {
-      newHistory.push({ type: 'output', text: 'Các lệnh khả dụng:\n- help: Xem danh sách lệnh\n- ls: Liệt kê các ứng dụng\n- run <id>: Mở ứng dụng (vd: run memory-game)\n- clear: Xóa màn hình terminal\n- whoami: Thông tin tác giả\n- date: Xem ngày giờ hệ thống' });
-    } else if (cmd === 'ls') {
-      const appList = apps.map(a => `  ${a.id.padEnd(15)} | ${a.title}`).join('\n');
-      newHistory.push({ type: 'output', text: `Danh sách module:\n${appList}` });
-    } else if (cmd === 'clear') {
-      setTerminalHistory([]);
-      setCommandInput('');
-      return;
-    } else if (cmd === 'whoami') {
-      newHistory.push({ type: 'output', text: 'Yuta - Nhà phát triển phần mềm đam mê giáo dục và công nghệ.' });
-    } else if (cmd === 'date') {
-      newHistory.push({ type: 'output', text: new Date().toString() });
-    } else if (cmd.startsWith('run ')) {
-      const targetId = cmd.split(' ')[1];
-      const app = apps.find(a => a.id === targetId);
-      if (app) {
-        newHistory.push({ type: 'output', text: `Đang khởi chạy [${app.title}]...` });
-        openAppFullscreen(app.url);
-      } else {
-        newHistory.push({ type: 'error', text: `Lỗi: Không tìm thấy module '${targetId}'. Gõ 'ls' để xem danh sách.` });
-      }
+  const handleOpenApp = (app: AppItem) => {
+    if (app.isInternal) {
+      setIsEditorOpen(true);
     } else {
-      newHistory.push({ type: 'error', text: `Lỗi: Không nhận diện được lệnh '${cmd}'. Gõ 'help' để xem danh sách lệnh.` });
+      openAppFullscreen(app.url);
     }
-
-    setTerminalHistory(newHistory);
-    setCommandInput('');
   };
 
   const filteredApps = apps.filter(app => 
@@ -161,19 +38,67 @@ export default function App() {
     app.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl + ~ or Ctrl + ` to focus terminal
+      if (e.ctrlKey && (e.key === '`' || e.key === '~')) {
+        e.preventDefault();
+        terminalInputRef.current?.focus();
+        return;
+      }
+
+      // Alt + N to open Notes globally
+      if (e.altKey && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        setIsEditorOpen(true);
+        return;
+      }
+
+      if (isEditorOpen) {
+        if (e.key === 'Escape') {
+          setIsEditorOpen(false);
+        }
+        return;
+      }
+
+      // If typing in an input, don't trigger app navigation
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // '/' to focus search
+      if (e.key === '/') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        return;
+      }
+
+      const appsCount = filteredApps.length;
+
+      if (appsCount === 0) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex(prev => prev < appsCount - 1 ? prev + 1 : 0);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : appsCount - 1);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedIndex >= 0 && selectedIndex < appsCount) {
+          handleOpenApp(filteredApps[selectedIndex]);
+        }
+      } else if (e.key === 'Escape') {
+        setSelectedIndex(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [searchQuery, selectedIndex, isEditorOpen, filteredApps]);
+
   if (isBooting) {
-    return (
-      <div className="crt min-h-screen bg-[#050505] text-green-500 font-mono p-6 selection:bg-green-900 selection:text-green-400">
-        <div className="max-w-3xl mx-auto mt-10">
-          {bootText.map((text, idx) => (
-            <div key={idx} className="mb-1 text-sm md:text-base">
-              <span className="text-gray-500">[{new Date().toISOString().split('T')[1].slice(0,8)}]</span> {text}
-            </div>
-          ))}
-          <div className="animate-pulse mt-2">_</div>
-        </div>
-      </div>
-    );
+    return <BootSequence onComplete={() => setIsBooting(false)} />;
   }
 
   return (
@@ -211,10 +136,14 @@ export default function App() {
           <span className="text-green-600 font-bold mr-2 ml-2">guest@yuta:~$</span>
           <span className="text-cyan-400 mr-2">find</span>
           <input 
+            ref={searchInputRef}
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Nhập tên ứng dụng hoặc từ khóa..."
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setSelectedIndex(-1); // Reset selection on search
+            }}
+            placeholder="Nhập tên ứng dụng hoặc từ khóa... (Nhấn '/' để tìm kiếm)"
             className="flex-1 bg-transparent border-none outline-none text-green-400 placeholder-green-900 w-full"
             autoComplete="off"
             spellCheck="false"
@@ -236,89 +165,24 @@ export default function App() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredApps.map((app, index) => (
-                <motion.div
+                <AppCard 
                   key={app.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.05 * index }}
-                  className="bg-green-900/10 border border-green-900 hover:border-green-500 transition-all duration-300 p-5 group relative overflow-hidden flex flex-col h-full"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-black/50 border border-green-900 text-green-400 group-hover:border-green-500 group-hover:glow-green transition-all">
-                        <app.icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-green-400 group-hover:glow-green transition-all truncate max-w-[180px]" title={app.title}>
-                          {'>'} {app.title}
-                        </h3>
-                        <span className="text-[10px] text-gray-500">ID: <span className="text-cyan-400">{app.id}</span></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-gray-400 text-sm mb-4 flex-1">
-                    {app.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {app.tags.map(tag => (
-                      <span key={tag} className="text-[9px] px-1.5 py-0.5 bg-black/50 border border-green-900 text-green-600 font-bold tracking-wider uppercase">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto pt-3 border-t border-green-900/50">
-                    <a
-                      href={app.url}
-                      onClick={(e) => openAppFullscreen(app.url, e)}
-                      className="w-full flex items-center justify-center px-3 py-2 bg-green-900/20 border border-green-500 text-green-400 hover:bg-green-500 hover:text-black transition-all font-bold tracking-widest text-xs group/btn uppercase"
-                    >
-                      [ Mở ứng dụng ]
-                      <ExternalLink className="w-3 h-3 ml-2 opacity-50 group-hover/btn:opacity-100" />
-                    </a>
-                  </div>
-                </motion.div>
+                  app={app}
+                  index={index}
+                  isSelected={selectedIndex === index}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                  onOpen={() => handleOpenApp(app)}
+                />
               ))}
             </div>
           )}
         </div>
 
         {/* Interactive Terminal */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 border border-green-900 bg-black/80 flex flex-col h-64 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
-        >
-          <div className="bg-green-900/30 px-4 py-1.5 border-b border-green-900 flex items-center justify-between">
-            <span className="text-xs font-bold text-green-500 flex items-center"><Command className="w-3 h-3 mr-2"/> TERMINAL_CONSOLE</span>
-            <span className="text-xs text-green-700">bash</span>
-          </div>
-          <div className="flex-1 p-4 overflow-y-auto font-mono text-sm space-y-1 scrollbar-thin scrollbar-thumb-green-900 scrollbar-track-transparent">
-            {terminalHistory.map((line, idx) => (
-              <div key={idx} className={`${
-                line.type === 'command' ? 'text-gray-300' : 
-                line.type === 'error' ? 'text-red-400' : 'text-green-400'
-              } whitespace-pre-wrap`}>
-                {line.text}
-              </div>
-            ))}
-            <div ref={terminalEndRef} />
-          </div>
-          <form onSubmit={handleCommandSubmit} className="border-t border-green-900/50 p-2 flex items-center bg-green-900/10">
-            <span className="text-green-600 font-bold mr-2">guest@yuta:~$</span>
-            <input 
-              type="text"
-              value={commandInput}
-              onChange={(e) => setCommandInput(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-green-400 w-full"
-              autoComplete="off"
-              spellCheck="false"
-            />
-          </form>
-        </motion.div>
+        <TerminalConsole 
+          terminalInputRef={terminalInputRef}
+          onOpenApp={handleOpenApp}
+        />
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600 text-xs font-mono border-t border-green-900/30 pt-6 pb-8">
@@ -330,6 +194,11 @@ export default function App() {
           </div>
           <p className="opacity-40">© {new Date().getFullYear()} Yuta. Chúc bạn học tập thật tốt!</p>
         </div>
+
+        {/* Editor Modal */}
+        {isEditorOpen && (
+          <NotesApp onClose={() => setIsEditorOpen(false)} />
+        )}
 
       </div>
     </div>
