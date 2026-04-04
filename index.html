@@ -2,48 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="theme-color" content="#0d0d0d" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-
-    <title>YutaHub | CyberLab Terminal</title>
-
-    <style>
-      /* Style cơ bản để tránh hiện tượng nháy trắng khi load app (Flash of White) */
-      :root {
-        --bg-color: #0d0d0d;
-        --primary-green: #00ff41; /* Màu xanh terminal chuẩn matrix */
-      }
-
-      body {
-        margin: 0;
-        padding: 0;
-        background-color: var(--bg-color);
-        color: var(--primary-green);
-        font-family: 'Inter', sans-serif;
-        overflow: hidden; /* Tránh scroll nhảy lung tung trên Webview */
-      }
-
-      /* Hiệu ứng loading đơn giản phong cách terminal */
-      #root:empty::before {
-        content: "> Initializing system...";
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        font-family: 'Fira Code', monospace;
-        animation: blink 1s infinite;
-      }
-
-      @keyframes blink {
-        50% { opacity: 0; }
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yuta Hub</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
