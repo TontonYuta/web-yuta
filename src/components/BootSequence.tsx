@@ -31,21 +31,40 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         i++;
       } else {
         clearInterval(interval);
-        setTimeout(onComplete, 800);
+        setTimeout(onComplete, 600);
       }
-    }, 250);
+    }, 220);
     return () => clearInterval(interval);
   }, [onComplete]);
 
   return (
-    <div className="crt min-h-screen bg-[#050505] text-green-500 font-mono p-6 selection:bg-green-900 selection:text-green-400">
-      <div className="max-w-3xl mx-auto mt-10">
+    <div 
+      onClick={onComplete}
+      className="crt min-h-screen bg-[#050505] text-green-500 font-mono p-4 sm:p-6 selection:bg-green-900 selection:text-green-400 cursor-pointer flex flex-col justify-between"
+    >
+      <div className="max-w-3xl w-full mx-auto mt-4 sm:mt-10">
+        <div className="flex justify-between items-center pb-2.5 mb-4 border-b border-green-900/60 text-xs">
+          <span className="text-green-600">[YUTA_BOOT_LOADER]</span>
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onComplete();
+            }}
+            className="px-2.5 py-1 bg-green-900/30 border border-green-600 hover:border-green-400 text-green-400 hover:bg-green-500 hover:text-black transition-all text-xs font-bold active:scale-95"
+          >
+            [ Bỏ qua &gt;&gt; ]
+          </button>
+        </div>
         {bootLines.map((line, idx) => (
-          <div key={idx} className="mb-1 text-sm md:text-base">
+          <div key={idx} className="mb-1 text-xs sm:text-sm md:text-base leading-relaxed">
             <span className="text-gray-500">[{line.time}]</span> {line.text}
           </div>
         ))}
-        <div className="animate-pulse mt-2">_</div>
+        <div className="animate-pulse mt-2 text-green-400">_</div>
+      </div>
+      <div className="text-center text-[11px] sm:text-xs text-green-700/80 pb-4 tracking-wider">
+        [ Chạm bất kỳ đâu trên màn hình để vào nhanh ]
       </div>
     </div>
   );

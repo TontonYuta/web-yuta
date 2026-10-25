@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "clean": "powershell -Command \"Remove-Item -Recurse -Force dist, out\"",
     "lint": "tsc --noEmit",
+    "test": "tsx --test tests/**/*.test.ts",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"

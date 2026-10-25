@@ -1,3 +1,5 @@
+export type ViewMode = 'grid' | 'list' | 'detail';
+
 export interface AppItem {
   id: string;
   title: string;
