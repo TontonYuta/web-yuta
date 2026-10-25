@@ -71,9 +71,10 @@ export default function App() {
 
   // Danh mục lọc 1 chạm
   const filterCategories = [
-    { label: 'Tất cả (3)', id: 'Tất cả' },
+    { label: `Tất cả (${apps.length})`, id: 'Tất cả' },
     { label: '📐 Toán học', id: 'Toán học' },
     { label: '🎓 Luyện thi', id: 'Luyện thi' },
+    { label: '📄 Công cụ PDF', id: 'Công cụ' },
     { label: '🎮 Focus Game', id: 'Game' }
   ];
 
@@ -97,6 +98,12 @@ export default function App() {
         /luyện thi|hsa|thpt|gdpt/i.test(app.title) ||
         app.tags.some(t => /luyện thi|hsa|thpt|gdpt/i.test(t)) ||
         /luyện thi/i.test(app.description)
+      );
+    }
+    if (selectedTag === 'Công cụ') {
+      return (
+        /pdf|spacer|công cụ/i.test(app.title) ||
+        app.tags.some(t => /công cụ|pdf|in ấn|đề thi/i.test(t))
       );
     }
     if (selectedTag === 'Game') {

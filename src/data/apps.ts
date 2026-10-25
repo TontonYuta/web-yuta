@@ -1,4 +1,4 @@
-import { GraduationCap, Calculator, Brain } from 'lucide-react';
+import { GraduationCap, Calculator, Brain, FileText } from 'lucide-react';
 import { AppItem } from '../types';
 
 export const apps: AppItem[] = [
@@ -30,6 +30,16 @@ export const apps: AppItem[] = [
     description: 'Trò chơi rèn luyện nhận thức 4 trong 1: Luyện mắt mở rộng thị giác ngoại vi, tính nhẩm thần tốc, phản xạ từ vựng tiếng Anh CEFR và phản xạ ngón tay.',
     icon: Brain,
     tags: ['Game', 'Luyện não', 'Phản xạ', 'Tập trung'],
+    sysStatus: 'Hoạt động',
+  },
+  {
+    id: 'pdf-spacer',
+    title: 'PDF Exam Spacer',
+    url: 'https://add-space-to-pdf-yuta.vercel.app/',
+    isInternal: false,
+    description: 'Công cụ tự động cắt khối câu hỏi đề thi và chèn khoảng trống làm bài chuẩn in ấn A4.',
+    icon: FileText,
+    tags: ['Công cụ', 'PDF', 'Đề thi', 'In ấn'],
     sysStatus: 'Hoạt động',
   }
 ];
